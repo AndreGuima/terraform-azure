@@ -61,7 +61,7 @@ resource "azurerm_network_security_group" "my_terraform_nsg" {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
-  
+
   security_rule {
     name                       = "http"
     priority                   = 201
@@ -69,7 +69,7 @@ resource "azurerm_network_security_group" "my_terraform_nsg" {
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
-    destination_port_range     = "80"
+    destination_port_range     = "8080"
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
@@ -129,6 +129,7 @@ resource "azurerm_linux_virtual_machine" "my_terraform_vm" {
   resource_group_name   = azurerm_resource_group.rg.name
   network_interface_ids = [azurerm_network_interface.my_terraform_nic.id]
   size                  = "Standard_DS1_v2"
+  custom_data           = filebase64("deployWebApp.sh")
 
   os_disk {
     name                 = "myOsDisk"
@@ -155,7 +156,10 @@ resource "azurerm_linux_virtual_machine" "my_terraform_vm" {
   boot_diagnostics {
     storage_account_uri = azurerm_storage_account.my_storage_account.primary_blob_endpoint
   }
+
+  tags = {
+    environment = "tf_example"
+  }
+
 }
-
-
 
